@@ -1,0 +1,14 @@
+.env
+.env.local
+node_modules/
+.next/
+__pycache__/
+*.pyc
+venv/
+.venv/
+model_cache/
+*.egg-info/
+dist/
+build/
+.DS_Store
+Thumbs.db
