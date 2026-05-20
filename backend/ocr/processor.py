@@ -41,8 +41,19 @@ def preprocess_image(image_bytes: bytes) -> Optional[any]:
     if img is None:
         return None
 
-    # EasyOCR handles its own internal preprocessing, 
-    # but returning the raw numpy array is best for EasyOCR
+    # SPEED OPTIMIZATION 1: Resize large images
+    # EasyOCR is exponentially slower on large images. 
+    # Downscaling to a max width/height of 1024px gives a massive speed boost on CPU.
+    max_dim = 1024
+    h, w = img.shape[:2]
+    if w > max_dim or h > max_dim:
+        scale = max_dim / max(w, h)
+        img = cv2.resize(img, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_AREA)
+
+    # SPEED OPTIMIZATION 2: Convert to grayscale
+    # Reduces the data the ML model has to process (1 channel instead of 3)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
     return img
 
 

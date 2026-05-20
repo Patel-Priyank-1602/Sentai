@@ -12,3 +12,9 @@ dist/
 build/
 .DS_Store
 Thumbs.db
+
+# Do not push massive datasets to GitHub (GitHub limits files > 100MB)
+backend/dataset/
+
+# Allow the trained model so others can run the app instantly
+!backend/ml/trained_models/full_pipeline.pkl
