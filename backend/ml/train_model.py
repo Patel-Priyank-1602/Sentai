@@ -330,7 +330,7 @@ def train_and_save():
     logger.info(f"  Legitimate (0): {neg:,} ({neg/total*100:.1f}%)")
     
     # Limit dataset size for reasonable training time
-    MAX_SAMPLES = 25_000
+    MAX_SAMPLES = 50_000
     if total > MAX_SAMPLES:
         logger.info(f"  ⚡ Sampling {MAX_SAMPLES:,} from {total:,} for training speed...")
         np.random.seed(42)
@@ -397,7 +397,7 @@ def train_and_save():
     ])
     
     # Train on full dataset (Skipping Cross-Validation to save time)
-    logger.info(f"\n🚀 Training final model on {len(texts):,} samples... (This should take 1-3 minutes)")
+    logger.info(f"\n🚀 Training final model on {len(texts):,} samples... (This should take 2-5 minutes)")
     pipeline.fit(texts, labels)
     
     # Evaluate on training set (sanity check)
