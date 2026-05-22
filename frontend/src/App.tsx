@@ -35,7 +35,8 @@ export default function App() {
         <Navbar />
         <main className="flex-1 overflow-y-auto">
           <Routes>
-            <Route path="/" element={<AllTracked />} />
+            <Route path="/" element={<Scan />} />
+            <Route path="/dashboard" element={<AllTracked />} />
             <Route path="/scan" element={<Scan />} />
             <Route path="/history" element={<History />} />
             <Route path="/about" element={<About />} />
@@ -61,7 +62,7 @@ export default function App() {
                 Terms
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/Patel-Priyank-1602/Sentinel_Cyber_AI"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-accent-400 transition-colors"

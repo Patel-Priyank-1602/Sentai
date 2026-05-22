@@ -11,7 +11,7 @@ import { useState, useEffect } from "react";
 const navLinks = [
   { href: "/scan", label: "New Scan", icon: ScanSearch },
   { href: "/history", label: "History", icon: History },
-  { href: "/", label: "All Tracked", icon: BarChart3 },
+  { href: "/dashboard", label: "All Tracked", icon: BarChart3 },
   { href: "/about", label: "About", icon: Info },
   { href: "/contact", label: "Contact", icon: MessageSquare },
 ];
