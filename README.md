@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  <a href="https://sentinelcyberai.netlify.app"><img src="https://img.shields.io/badge/🌐_Live_Demo-sentinelcyberai.netlify.app-00C7B7?style=for-the-badge&logo=netlify&logoColor=white" alt="Live Demo" /></a>
+</p>
+
+<p align="center">
   <a href="#-features"><img src="https://img.shields.io/badge/AI%20Engine-Active-brightgreen?style=for-the-badge" alt="AI Engine" /></a>
   <a href="#-tech-stack"><img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" /></a>
   <a href="#-tech-stack"><img src="https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" /></a>
@@ -23,6 +27,9 @@
 
 <br/>
 
+> [!WARNING]
+> **Image Scanning on Live Demo:** The hosted demo at [sentinelcyberai.netlify.app](https://sentinelcyberai.netlify.app) runs on **Render's free tier** with limited CPU & RAM. Image/OCR scans may be **slow or timeout**. Text, URL, email, and phone scans work perfectly. For reliable image scanning, **fork this repo and run the backend locally** — see [Getting Started](#-getting-started).
+
 ---
 
 ## 📖 Table of Contents
@@ -32,11 +39,10 @@
 - [🏗️ Architecture](#️-architecture)
 - [🧠 AI / ML Pipeline](#-ai--ml-pipeline)
 - [🖥️ Tech Stack](#️-tech-stack)
-- [📸 Screenshots](#-screenshots)
 - [🚀 Getting Started](#-getting-started)
 - [📡 API Reference](#-api-reference)
 - [🔧 Configuration](#-configuration)
-- [🐳 Docker](#-docker)
+- [🐳 Docker Deployment](#-docker-deployment)
 - [📊 Model Training](#-model-training)
 - [📂 Project Structure](#-project-structure)
 - [🤝 Contributing](#-contributing)
@@ -50,14 +56,15 @@
 |---|---|
 | 🧠 **Hybrid ML + Heuristic Detection** | Ensemble classifier (Logistic Regression + Random Forest + Gradient Boosting) combined with 50+ rule-based heuristics for high-accuracy threat detection |
 | 🔍 **Auto-Detection Engine** | Automatically identifies input type (URL, email, phone, text) and routes to the appropriate analysis pipeline |
-| 📷 **OCR & Image Scanning** | EasyOCR-powered text extraction from screenshots with OpenCV preprocessing (grayscale, resize) for optimized CPU performance |
+| 📷 **OCR & Image Scanning** | Tesseract OCR with multi-strategy preprocessing (original, grayscale, inverted, OTSU) for robust text extraction from screenshots |
 | 📱 **QR Code Decoding** | Detects and decodes QR codes from uploaded images, then analyzes embedded URLs for threats |
 | 🌐 **Advanced URL Analysis** | Shannon entropy calculation, Levenshtein-distance typosquatting detection, suspicious TLD checking, and URL structure analysis |
 | 📧 **Email Header Forensics** | Parses From/Reply-To/Return-Path headers, detects display name spoofing, domain mismatches, and brand impersonation |
 | 📞 **Phone Number Risk Assessment** | 60+ high-risk area codes and country code database with VoIP pattern detection and number anomaly analysis |
 | 📊 **Real-Time Analytics Dashboard** | Live threat feed, risk trend charts, threat distribution pie chart, and input volume bar chart powered by Recharts |
 | ☁️ **Supabase Integration** | Optional cloud persistence — users can opt-in to share scan results publicly for community threat intelligence |
-| 🐳 **Docker Ready** | Production Dockerfile included for containerized backend deployment |
+| 🔐 **Supabase Auth** | Email/password authentication with Google & GitHub OAuth integration |
+| 🐳 **Docker Ready** | Production Dockerfile included for containerized backend deployment with Tesseract OCR pre-installed |
 
 ---
 
@@ -70,9 +77,9 @@
     <td align="center">📧<br/><strong>Emails</strong><br/><sub>Header forensics, spoofing detection</sub></td>
   </tr>
   <tr>
-    <td align="center">📱<br/><strong>Phone Numbers</strong><br/><sub>Area code risk DB, VoIP detection</sub></td>
+    <td align="center">📞<br/><strong>Phone Numbers</strong><br/><sub>Area code risk DB, VoIP detection</sub></td>
     <td align="center">📱<br/><strong>QR Codes</strong><br/><sub>Decode + analyze embedded content</sub></td>
-    <td align="center">🖼️<br/><strong>Images / Screenshots</strong><br/><sub>EasyOCR extraction + threat analysis</sub></td>
+    <td align="center">🖼️<br/><strong>Images / Screenshots</strong><br/><sub>Tesseract OCR extraction + threat analysis</sub></td>
   </tr>
 </table>
 
@@ -82,12 +89,11 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        FRONTEND (React 19 + Vite)               │
+│                    FRONTEND (React 19 + Vite)                   │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌───────────────┐   │
 │  │  Scanner  │  │Dashboard │  │ History  │  │ About/Contact │   │
 │  │   Page    │  │ Analytics│  │  Page    │  │    Pages      │   │
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └───────────────┘   │
-│       │              │             │                             │
 │       └──────────────┴─────────────┘                             │
 │                      │                                           │
 │              ┌───────┴────────┐                                  │
@@ -167,6 +173,21 @@ Text Input
 - **URL Shortener Detection** — 20+ shortener services
 - **Structural Analysis** — Path depth, IP-based URLs, `@` symbol abuse, double-slash redirects
 
+### OCR Pipeline (Image Scanning)
+
+Sentinel uses **Tesseract OCR** with a multi-strategy approach for maximum text extraction:
+
+```
+Uploaded Image
+    │
+    ├─── Strategy 1: Original (color) ──────── Best for clean screenshots
+    ├─── Strategy 2: Grayscale ─────────────── Good for most images
+    ├─── Strategy 3: Inverted ──────────────── Light text on dark backgrounds
+    └─── Strategy 4: OTSU Threshold ────────── Low contrast images
+         │
+         └── Pick result with most words extracted → ML Analysis
+```
+
 ---
 
 ## 🖥️ Tech Stack
@@ -179,11 +200,10 @@ Text Input
 | **TypeScript** | Type Safety |
 | **Vite 6** | Build Tool & Dev Server |
 | **Tailwind CSS 3** | Utility-First Styling |
-| **Framer Motion** | Animations |
 | **Recharts** | Data Visualization (Area, Pie, Bar charts) |
 | **Lucide React** | Icon Library |
 | **React Router 7** | Client-Side Routing |
-| **TanStack Query 5** | Data Fetching & Caching |
+| **Supabase JS** | Auth & Database Client |
 
 ### Backend
 
@@ -192,7 +212,7 @@ Text Input
 | **FastAPI** | API Framework (async, auto-docs) |
 | **Python 3.11+** | Runtime |
 | **Scikit-learn** | ML Pipeline (TF-IDF + Ensemble) |
-| **EasyOCR** | Optical Character Recognition |
+| **Tesseract OCR** | Optical Character Recognition |
 | **OpenCV** | Image Preprocessing |
 | **pyzbar** | QR Code Decoding |
 | **Pydantic v2** | Request/Response Validation |
@@ -204,9 +224,10 @@ Text Input
 
 | Technology | Purpose |
 |---|---|
-| **Supabase** | Optional Cloud Database (PostgreSQL) |
-| **Docker** | Containerized Deployment |
-| **Uvicorn** | ASGI Server |
+| **Netlify** | Frontend Hosting |
+| **Render** | Backend Hosting (Docker) |
+| **Supabase** | Auth, Database (PostgreSQL) |
+| **Docker** | Containerized Backend Deployment |
 
 ---
 
@@ -216,14 +237,14 @@ Text Input
 
 - **Node.js** ≥ 18.x
 - **Python** ≥ 3.11
-- **pip** (Python package manager)
+- **Tesseract OCR** — [Install guide](#tesseract-installation)
 - **Git**
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/sentinel-ai.git
-cd sentinel-ai
+git clone https://github.com/Patel-Priyank-1602/Sentinel_Cyber_AI.git
+cd Sentinel_Cyber_AI
 ```
 
 ### 2. Backend Setup
@@ -244,8 +265,9 @@ source venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
-# (Optional) Create a .env file from the example
+# Create .env file
 cp .env.example .env
+# Edit .env and add your Supabase credentials (optional)
 
 # Start the API server
 uvicorn main:app --reload
@@ -263,20 +285,34 @@ cd frontend
 npm install
 
 # Create environment file
-echo "VITE_API_URL=http://localhost:8000" > .env
+cp .env.example .env
+# Edit .env — set VITE_API_URL=http://localhost:8000
 
 # Start dev server
 npm run dev
 ```
 
-> The app will be available at `http://localhost:5173` (Vite default).
+> The app will be available at `http://localhost:5173`.
 
-### 4. (Optional) Train the ML Model on Custom Datasets
+### 4. Tesseract Installation
+
+Tesseract OCR is required for image scanning:
+
+| Platform | Command |
+|---|---|
+| **Windows** | `winget install UB-Mannheim.TesseractOCR` |
+| **macOS** | `brew install tesseract` |
+| **Ubuntu/Debian** | `sudo apt-get install tesseract-ocr` |
+| **Docker** | Already included in the Dockerfile |
+
+> On Windows, Tesseract installs to `C:\Program Files\Tesseract-OCR\` — the app auto-detects this path.
+
+### 5. (Optional) Train the ML Model
 
 ```bash
 cd backend
 
-# Place your CSV datasets in:
+# Place CSV datasets in:
 #   backend/dataset/spam/
 #   backend/dataset/mail/
 #   backend/dataset/url/
@@ -285,13 +321,13 @@ cd backend
 python -m ml.train_model
 ```
 
-> The trained model is saved to `backend/ml/trained_models/full_pipeline.pkl` and auto-loaded by the server on restart. If no trained model exists, the server falls back to a built-in 40-sample dataset.
+> The trained model is saved to `backend/ml/trained_models/full_pipeline.pkl` and auto-loaded on server restart. If no trained model exists, the server uses a built-in fallback dataset.
 
 ---
 
 ## 📡 API Reference
 
-### Health Check
+### Root
 
 ```http
 GET /
@@ -302,8 +338,18 @@ GET /
   "name": "Sentinel AI API",
   "version": "1.0.0",
   "status": "operational",
-  "timestamp": "2026-05-21T15:00:00.000Z"
+  "timestamp": "2026-05-22T12:00:00.000Z"
 }
+```
+
+### Health Check
+
+```http
+GET /health
+```
+
+```json
+{ "status": "healthy", "ai_engine": "active" }
 ```
 
 ### Unified Scan
@@ -343,11 +389,9 @@ Content-Type: multipart/form-data
   "features": {
     "urgency_score": 0.667,
     "credential_request": true,
-    "suspicious_keywords": ["password", "verify your", "suspended"],
-    "domain_entropy": null,
-    "has_suspicious_tld": null
+    "suspicious_keywords": ["password", "verify your", "suspended"]
   },
-  "created_at": "2026-05-21T15:30:00.000000+00:00"
+  "created_at": "2026-05-22T12:00:00.000000+00:00"
 }
 ```
 
@@ -363,53 +407,57 @@ DELETE /api/scans/:id   # Delete a scan
 
 ## 🔧 Configuration
 
-### Backend Environment Variables
-
-Create a `.env` file in the `backend/` directory:
+### Backend `.env`
 
 ```env
-# API Configuration
-NEXT_PUBLIC_API_URL=http://localhost:8000
-
-# Supabase (Optional — for cloud persistence)
 SUPABASE_URL=your_supabase_url
 SUPABASE_KEY=your_supabase_key
 ```
 
-### Frontend Environment Variables
-
-Create a `.env` file in the `frontend/` directory:
+### Frontend `.env`
 
 ```env
-# Backend API URL
+# Backend API URL (use http://localhost:8000 for local development)
 VITE_API_URL=http://localhost:8000
 
-# Supabase (Optional — for cloud persistence & public sharing)
+# Supabase (for auth & cloud persistence)
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 ### Supabase Setup (Optional)
 
-If you want to enable cloud persistence and the "Share Publicly" feature:
-
 1. Create a free project at [supabase.com](https://supabase.com)
-2. Run the SQL schema from `frontend/sentinelhistory.sql` in your Supabase SQL Editor
-3. Add your Supabase URL and anon key to both `.env` files
+2. Enable **Email/Password**, **Google**, and **GitHub** auth providers
+3. Create the `sentinelhistory` table (schema in `frontend/sentinelhistory.sql`)
+4. Add credentials to both `.env` files
 
 ---
 
-## 🐳 Docker
+## 🐳 Docker Deployment
 
-### Build & Run the Backend
+The backend includes a production-ready Dockerfile with Tesseract OCR pre-installed.
+
+### Local Docker Build
 
 ```bash
-# From the project root
-docker build -f docker/Dockerfile -t sentinel-backend .
+cd backend
+docker build -t sentinel-backend .
 docker run -p 8000:8000 sentinel-backend
 ```
 
-The Dockerfile uses `python:3.11-slim` and installs system dependencies for OCR (Tesseract, libzbar, OpenGL).
+### Deploy to Render
+
+1. Push to GitHub
+2. Create a new **Web Service** on [Render](https://render.com)
+3. Set **Environment** to `Docker`
+4. Set **Root Directory** to `backend`
+5. Set **Dockerfile Path** to `./Dockerfile`
+6. Add environment variables (`SUPABASE_URL`, `SUPABASE_KEY`)
+7. Deploy!
+
+> [!NOTE]
+> Render's free tier has limited resources (512MB RAM, shared CPU). Text/URL/email/phone scans work great. Image OCR scans may be slow due to processing overhead. For production image scanning, use a paid tier or self-host.
 
 ---
 
@@ -424,20 +472,19 @@ The trainer automatically detects:
 - **Label columns**: `label`, `class`, `category`, `type`, `spam`, `v1`, `target`, etc.
 - **Label values**: `spam`/`ham`, `phishing`/`legitimate`, `1`/`0`, `malicious`/`benign`, etc.
 
-### Directory Structure
+### Dataset Directory
 
 ```
 backend/dataset/
 ├── spam/          # SMS spam detection datasets
-│   ├── spam_data.csv
-│   └── ...
+│   └── spam_data.csv
 ├── mail/          # Email phishing datasets
 │   └── phishing_emails.csv
 └── url/           # URL/domain reputation datasets
     └── malicious_urls.csv
 ```
 
-### Train the Model
+### Train
 
 ```bash
 cd backend
@@ -446,9 +493,9 @@ python -m ml.train_model
 
 **Output:**
 - Trained pipeline → `backend/ml/trained_models/full_pipeline.pkl`
-- Auto-loaded by the server on next restart
-- Maximum 50,000 samples used for training (configurable)
-- Produces classification report with precision, recall, F1-score
+- Auto-loaded by the server on restart
+- Max 50,000 samples (configurable)
+- Classification report with precision, recall, F1-score
 
 ### Ensemble Architecture
 
@@ -466,10 +513,12 @@ TF-IDF Vectorizer (10K features, 1–3 n-grams)
 ## 📂 Project Structure
 
 ```
-Sentinel/
+Sentinel_Cyber_AI/
 ├── backend/
 │   ├── main.py                    # FastAPI app entry point
+│   ├── Dockerfile                 # Production Docker image
 │   ├── requirements.txt           # Python dependencies
+│   ├── build.sh                   # Build script for Render
 │   ├── .env.example               # Environment template
 │   ├── api/
 │   │   └── routes.py              # Unified scan + history endpoints
@@ -483,12 +532,12 @@ Sentinel/
 │   │   ├── risk_engine.py         # Risk scoring & level classification
 │   │   ├── train_model.py         # Dataset loader & training pipeline
 │   │   └── trained_models/
-│   │       └── full_pipeline.pkl  # Serialized trained model
+│   │       └── full_pipeline.pkl  # Serialized trained model (~5MB)
 │   ├── ocr/
-│   │   └── processor.py           # EasyOCR + OpenCV image processing
+│   │   └── processor.py           # Tesseract OCR + OpenCV preprocessing
 │   ├── services/
 │   │   ├── url_analyzer.py        # URL entropy, typosquatting, TLD analysis
-│   │   ├── email_parser.py        # Email header forensics & spoofing detection
+│   │   ├── email_parser.py        # Email header forensics & spoofing
 │   │   ├── phone_analyzer.py      # Phone number risk assessment
 │   │   └── qr_decoder.py          # QR code decoding (pyzbar)
 │   └── dataset/                   # Training datasets (gitignored)
@@ -497,9 +546,8 @@ Sentinel/
 │   ├── vite.config.ts
 │   ├── tailwind.config.ts
 │   ├── index.html
-│   ├── public/
-│   │   ├── icon.png               # App icon
-│   │   └── hack.webp              # Scanner background image
+│   ├── .env.example               # Frontend env template
+│   ├── public/                    # Static assets
 │   └── src/
 │       ├── main.tsx               # React entry point
 │       ├── App.tsx                # Root app with routing
@@ -507,20 +555,20 @@ Sentinel/
 │       ├── components/
 │       │   └── layout/
 │       │       ├── Navbar.tsx     # Top navigation bar
-│       │       ├── Sidebar.tsx    # Side navigation
+│       │       ├── Sidebar.tsx    # Side navigation (mobile drawer)
 │       │       └── TopBar.tsx     # Top utility bar
 │       ├── pages/
-│       │   ├── Scan.tsx           # Unified threat scanner (main feature)
-│       │   ├── AllTracked.tsx     # Analytics dashboard with charts
+│       │   ├── Scan.tsx           # Unified threat scanner
+│       │   ├── AllTracked.tsx     # Analytics dashboard
 │       │   ├── History.tsx        # Scan history & management
-│       │   ├── About.tsx          # Project overview & features
-│       │   └── Contact.tsx        # Contact form
+│       │   ├── About.tsx          # Project overview
+│       │   └── Contact.tsx        # Contact form (Formspree)
 │       ├── services/
 │       │   └── api.ts             # API client + Supabase integration
 │       └── lib/
-│           └── utils.ts           # Utility functions (cn, risk helpers)
+│           └── utils.ts           # Utility functions
 ├── docker/
-│   └── Dockerfile                 # Backend Docker image
+│   └── Dockerfile                 # Legacy Dockerfile (use backend/Dockerfile)
 ├── .gitignore
 └── README.md
 ```
@@ -541,7 +589,7 @@ Contributions are welcome! Here's how:
 
 - Backend auto-reloads with `uvicorn main:app --reload`
 - Frontend hot-reloads with `npm run dev`
-- API docs available at `http://localhost:8000/docs` (Swagger UI)
+- API docs at `http://localhost:8000/docs` (Swagger UI)
 - ReDoc at `http://localhost:8000/redoc`
 
 ---
@@ -553,5 +601,5 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 ---
 
 <p align="center">
-  <sub>Built with ❤️ by <strong>Sentinel AI Team</strong></sub>
+  <sub>Built with ❤️ by <a href="https://github.com/Patel-Priyank-1602"><strong>Priyank Patel</strong></a></sub>
 </p>
