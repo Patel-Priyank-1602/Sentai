@@ -211,6 +211,16 @@ export default function Scan() {
                   </div>
                 )}
 
+                {/* Image Upload Note */}
+                <div className="mt-3 sm:mt-4 p-2.5 sm:p-3 bg-accent-500/5 border border-accent-500/15 rounded-lg sm:rounded-xl flex items-start gap-2 sm:gap-2.5">
+                  <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-[10px] sm:text-xs text-surface-400 leading-relaxed">
+                    <span className="text-accent-300 font-semibold">Image scanning note:</span>{" "}
+                    The hosted demo runs on Render's free tier with limited resources. Image/OCR scans may be slow or timeout.
+                    For reliable image scanning, <a href="https://github.com/Patel-Priyank-1602/Sentinel_Cyber_AI" target="_blank" rel="noopener noreferrer" className="text-accent-400 underline underline-offset-2 hover:text-accent-300 transition-colors">fork the repo</a> and run the backend locally.
+                  </p>
+                </div>
+
                 {/* Privacy Toggle */}
                 <div className="mt-3 sm:mt-4 flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-surface-800/30 rounded-lg sm:rounded-xl border border-surface-700/50">
                   <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
