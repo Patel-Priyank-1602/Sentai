@@ -17,6 +17,7 @@ export function getRiskColor(score: number): string {
     case "safe": return "#10b981";
     case "suspicious": return "#f59e0b";
     case "dangerous": return "#ef4444";
+    default: return "#ef4444";
   }
 }
 
@@ -26,7 +27,8 @@ export function getRiskLabel(score: number): string {
     case "safe": return "Safe";
     case "suspicious": return "Suspicious";
     case "dangerous": return "Dangerous";
+    default: return "Unknown";
   }
 }
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+export const API_BASE_URL = import.meta.env.VITE_API_URL || "https://sentinel-cyber-ai.onrender.com";

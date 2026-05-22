@@ -10,8 +10,9 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     API_VERSION: str = "v1"
 
-    # CORS
+    # CORS — accepts env var CORS_ORIGINS as comma-separated list, or defaults to allow all
     CORS_ORIGINS: List[str] = [
+        "*",
         "http://localhost:3000",
         "http://localhost:3001",
         "http://127.0.0.1:3000",
