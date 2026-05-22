@@ -1,10 +1,14 @@
 """
 OCR Processing Pipeline
-Preprocesses images and extracts text using EasyOCR (pure Python, no Tesseract needed).
+Preprocesses images and extracts text using Tesseract OCR (lightweight, no PyTorch needed).
+Uses multiple OCR strategies to maximize text extraction accuracy.
 """
 
 import io
+import logging
 from typing import Optional, Dict
+
+logger = logging.getLogger(__name__)
 
 try:
     import cv2
@@ -14,14 +18,24 @@ except ImportError:
     HAS_OPENCV = False
 
 try:
-    import easyocr
-    HAS_EASYOCR = True
-    # Initialize the reader once globally to save time on repeated scans
-    # Uses English language. Will automatically use CPU or GPU depending on PyTorch availability.
-    # Note: On first run, it will download a ~15MB detection model and a ~10MB recognition model to ~/.EasyOCR/
-    reader = easyocr.Reader(['en'], gpu=False)
+    import pytesseract
+    import platform
+    import os
+    HAS_TESSERACT = True
+
+    # Auto-detect Tesseract path on Windows (not in PATH by default)
+    if platform.system() == "Windows":
+        win_paths = [
+            r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+            r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+            os.path.expanduser(r"~\AppData\Local\Tesseract-OCR\tesseract.exe"),
+        ]
+        for p in win_paths:
+            if os.path.isfile(p):
+                pytesseract.pytesseract.tesseract_cmd = p
+                break
 except ImportError:
-    HAS_EASYOCR = False
+    HAS_TESSERACT = False
 
 try:
     from PIL import Image
@@ -30,72 +44,113 @@ except ImportError:
     HAS_PIL = False
 
 
-def preprocess_image(image_bytes: bytes) -> Optional[any]:
-    """Preprocess image for better OCR accuracy (Optional for EasyOCR but can help)."""
-    if not HAS_OPENCV:
-        return None
-
-    nparr = np.frombuffer(image_bytes, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-    if img is None:
-        return None
-
-    # SPEED OPTIMIZATION 1: Resize large images
-    # EasyOCR is exponentially slower on large images. 
-    # Downscaling to a max width/height of 1024px gives a massive speed boost on CPU.
-    max_dim = 1024
+def _resize_if_large(img, max_dim=2048):
+    """Resize large images for faster OCR while preserving enough detail."""
     h, w = img.shape[:2]
     if w > max_dim or h > max_dim:
         scale = max_dim / max(w, h)
         img = cv2.resize(img, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_AREA)
-
-    # SPEED OPTIMIZATION 2: Convert to grayscale
-    # Reduces the data the ML model has to process (1 channel instead of 3)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
     return img
 
 
-def extract_text_from_image(image_bytes: bytes) -> Dict:
-    """Extract text from image using EasyOCR."""
-    if not HAS_EASYOCR:
-        return {"text": "", "error": "EasyOCR is not installed. Please run: pip install easyocr", "confidence": 0}
-
+def _run_tesseract(img, config="") -> tuple:
+    """Run Tesseract on an image and return (text, confidence)."""
     try:
-        if HAS_OPENCV:
-            # Use OpenCV to load the image into a numpy array (EasyOCR prefers this)
-            img = preprocess_image(image_bytes)
-            if img is not None:
-                # readtext returns a list of tuples: (bbox, text, confidence)
-                results = reader.readtext(img)
-            else:
-                return {"text": "", "error": "Failed to decode image with OpenCV", "confidence": 0}
-        else:
-            # Fallback if OpenCV isn't available (EasyOCR can also accept raw bytes)
-            results = reader.readtext(image_bytes)
-            
-        if not results:
-            return {"text": "", "error": "No text detected in image", "confidence": 0}
+        pil_img = Image.fromarray(img) if HAS_PIL else img
+        ocr_data = pytesseract.image_to_data(pil_img, output_type=pytesseract.Output.DICT, config=config)
 
-        # Combine text and calculate average confidence
         texts = []
         confidences = []
-        
-        for (bbox, text, prob) in results:
-            if prob > 0.15: # Filter out absolute noise
-                texts.append(text)
-                confidences.append(prob)
+        for i, text in enumerate(ocr_data["text"]):
+            conf = int(ocr_data["conf"][i])
+            word = text.strip()
+            if word and conf > 10:
+                texts.append(word)
+                confidences.append(conf)
 
         final_text = " ".join(texts)
         avg_conf = sum(confidences) / len(confidences) if confidences else 0
+        return final_text.strip(), round(avg_conf, 1)
+    except Exception as e:
+        logger.warning(f"Tesseract run failed: {e}")
+        return "", 0
+
+
+def extract_text_from_image(image_bytes: bytes) -> Dict:
+    """
+    Extract text from image using Tesseract OCR with multiple strategies.
+    Tries different preprocessing methods and picks the best result.
+    """
+    if not HAS_TESSERACT:
+        return {"text": "", "error": "pytesseract is not installed. Please run: pip install pytesseract", "confidence": 0}
+
+    if not HAS_OPENCV:
+        # Fallback: try PIL directly without preprocessing
+        if HAS_PIL:
+            try:
+                pil_img = Image.open(io.BytesIO(image_bytes))
+                text, conf = _run_tesseract(np.array(pil_img))
+                if text:
+                    return {"text": text, "confidence": conf, "method": "tesseract-pil", "error": ""}
+            except Exception:
+                pass
+        return {"text": "", "error": "OpenCV is not available for image preprocessing", "confidence": 0}
+
+    try:
+        # Decode image
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        if img is None:
+            return {"text": "", "error": "Failed to decode image", "confidence": 0}
+
+        img = _resize_if_large(img)
+
+        # ── Strategy 1: Original image (works great for clean screenshots) ──
+        results = []
+
+        text1, conf1 = _run_tesseract(img, config="--psm 6")
+        if text1:
+            results.append((text1, conf1, "original"))
+            logger.info(f"Strategy 1 (original): {len(text1.split())} words, conf={conf1}")
+
+        # ── Strategy 2: Grayscale (good for most images) ──
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        text2, conf2 = _run_tesseract(gray, config="--psm 6")
+        if text2:
+            results.append((text2, conf2, "grayscale"))
+            logger.info(f"Strategy 2 (grayscale): {len(text2.split())} words, conf={conf2}")
+
+        # ── Strategy 3: Inverted grayscale (for light text on dark background) ──
+        inverted = cv2.bitwise_not(gray)
+        text3, conf3 = _run_tesseract(inverted, config="--psm 6")
+        if text3:
+            results.append((text3, conf3, "inverted"))
+            logger.info(f"Strategy 3 (inverted): {len(text3.split())} words, conf={conf3}")
+
+        # ── Strategy 4: OTSU thresholding (good for low contrast) ──
+        _, otsu = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        text4, conf4 = _run_tesseract(otsu, config="--psm 6")
+        if text4:
+            results.append((text4, conf4, "otsu"))
+            logger.info(f"Strategy 4 (otsu): {len(text4.split())} words, conf={conf4}")
+
+        if not results:
+            return {"text": "", "error": "No text detected in image", "confidence": 0}
+
+        # Pick the result with the most words (best text extraction)
+        # If tied, prefer higher confidence
+        best = max(results, key=lambda r: (len(r[0].split()), r[1]))
+        best_text, best_conf, best_method = best
+
+        logger.info(f"✅ Best OCR result: method={best_method}, words={len(best_text.split())}, conf={best_conf}")
 
         return {
-            "text": final_text.strip(),
-            "confidence": round(avg_conf * 100, 1),
-            "method": "easyocr",
+            "text": best_text,
+            "confidence": best_conf,
+            "method": f"tesseract-{best_method}",
             "error": ""
         }
 
     except Exception as e:
+        logger.error(f"OCR extraction failed: {e}")
         return {"text": "", "error": str(e), "confidence": 0}

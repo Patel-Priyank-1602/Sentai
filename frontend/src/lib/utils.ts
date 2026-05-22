@@ -31,4 +31,4 @@ export function getRiskLabel(score: number): string {
   }
 }
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || "https://sentinel-cyber-ai.onrender.com";
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || "https://sentinel-cyber-ai.onrender.com").replace(/\/+$/, "");
