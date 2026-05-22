@@ -130,6 +130,131 @@
 └──────────────────────────────────────────────────────────────────┘
 ```
 
+### Sequence Diagram — Scan Request Flow
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Frontend as Frontend<br/>React + Vite
+    participant Supabase as Supabase<br/>Auth + DB
+    participant API as FastAPI<br/>Backend
+    participant Detect as Auto-Detection<br/>Engine
+    participant Analyzer as Analyzer<br/>URL/Email/Phone
+    participant OCR as OCR Pipeline<br/>Tesseract
+    participant ML as ML Engine<br/>TF-IDF + Ensemble
+    participant Risk as Risk Engine<br/>Scoring
+
+    User->>Frontend: Submit text or upload image
+    Frontend->>API: POST /api/scan (input_data / file)
+
+    API->>Detect: Classify input type
+
+    alt Text / URL / Email / Phone
+        Detect->>Analyzer: Route to specific analyzer
+        Analyzer->>ML: Extracted features + text
+    else Image Upload
+        Detect->>OCR: Send image bytes
+        OCR->>OCR: Strategy 1: Original
+        OCR->>OCR: Strategy 2: Grayscale
+        OCR->>OCR: Strategy 3: Inverted
+        OCR->>OCR: Strategy 4: OTSU
+        OCR->>OCR: Pick best result (most words)
+        OCR->>ML: Extracted text
+    else QR Code
+        Detect->>OCR: Decode QR (pyzbar)
+        OCR->>Analyzer: Extracted URL
+        Analyzer->>ML: Analyzed URL features
+    end
+
+    ML->>ML: TF-IDF Vectorization (10K features)
+    ML->>ML: Ensemble Vote (LR + RF + GB)
+    ML->>ML: Heuristic Analysis (50+ rules)
+    ML->>Risk: Hybrid Score (60% ML / 40% Heuristic)
+
+    Risk->>Risk: Calculate risk score (0-100)
+    Risk->>Risk: Classify level (Safe/Suspicious/Dangerous)
+    Risk->>API: Risk assessment result
+
+    API->>Frontend: JSON response (score, level, explanation)
+    Frontend->>User: Display results with risk gauge
+
+    opt Share Publicly enabled
+        Frontend->>Supabase: Save scan to sentinelhistory
+    end
+```
+
+### Component Diagram
+
+```mermaid
+graph TB
+    subgraph Client["🌐 Client Layer"]
+        A["sentinelcyberai.netlify.app"]
+    end
+
+    subgraph Frontend["⚛️ Frontend — React 19"]
+        B["Scan Page"]
+        C["Analytics Dashboard"]
+        D["History Page"]
+        E["Auth Pages"]
+    end
+
+    subgraph Auth["🔐 Supabase"]
+        F["Email/Password Auth"]
+        G["Google OAuth"]
+        H["GitHub OAuth"]
+        I["PostgreSQL DB"]
+    end
+
+    subgraph Backend["🐍 Backend — FastAPI"]
+        J["POST /api/scan"]
+        K["Auto-Detection Engine"]
+
+        subgraph Analyzers["🔬 Analyzers"]
+            L["URL Analyzer"]
+            M["Email Parser"]
+            N["Phone Analyzer"]
+            O["QR Decoder"]
+        end
+
+        subgraph ImageProc["📷 OCR"]
+            P["Tesseract OCR"]
+            Q["OpenCV Preprocessing"]
+        end
+
+        subgraph MLEngine["🧠 ML Engine"]
+            R["TF-IDF Vectorizer"]
+            S["Ensemble Classifier"]
+            T["Heuristic Engine"]
+            U["Hybrid Scorer"]
+        end
+
+        V["Risk Engine 0-100"]
+    end
+
+    subgraph Deploy["☁️ Deployment"]
+        W["Netlify"]
+        X["Render Docker"]
+    end
+
+    A --> B & C & D & E
+    E --> F & G & H
+    B & C & D --> I
+    B -->|REST API| J
+    J --> K
+    K --> L & M & N & O & P
+    P --> Q
+    Q --> R
+    L & M & N --> R
+    O --> L
+    R --> S & T
+    S --> U
+    T --> U
+    U --> V
+    V -->|JSON| B
+    Frontend -.-> W
+    Backend -.-> X
+```
+
 ---
 
 ## 🧠 AI / ML Pipeline
