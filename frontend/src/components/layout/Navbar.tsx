@@ -18,19 +18,19 @@ const navLinks = [
 
 const socialLinks = [
   {
-    href: "https://github.com",
+    href: "https://github.com/Patel-Priyank-1602/Sentinel_Cyber_AI",
     label: "GitHub",
     icon: Github,
     color: "#e5e5e5",
   },
   {
-    href: "https://linkedin.com",
+    href: "https://www.linkedin.com/in/patel-priyank-d/",
     label: "LinkedIn",
     icon: Linkedin,
     color: "#0a66c2",
   },
   {
-    href: "mailto:contact@sentinel.ai",
+    href: "mailto:patelpriyank2526@gmail.com",
     label: "Email",
     icon: Mail,
     color: "#f97316",

@@ -219,7 +219,7 @@ export default function Contact() {
           </div>
           <div>
             <p className="text-xs text-surface-500 font-semibold uppercase tracking-wider">Email</p>
-            <p className="text-sm text-surface-300 mt-0.5">contact@sentinel.ai</p>
+            <p className="text-sm text-surface-300 mt-0.5">patelpriyank2526@gmail.com</p>
           </div>
         </div>
         <div className="glass-card p-5 flex items-center gap-4">
