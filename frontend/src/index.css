@@ -3,40 +3,72 @@
 @tailwind utilities;
 
 @layer base {
-  * { border-color: theme(colors.surface.800); }
-  html { scroll-behavior: smooth; }
+  * {
+    border-color: theme('colors.surface.800');
+  }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: #0a0a0a;
+    color: #e5e5e5;
   }
-  ::selection { background: rgba(99,102,241,0.3); color: #f1f5f9; }
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: #020617; }
-  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  ::selection {
+    background: rgba(249, 115, 22, 0.3);
+    color: #fafafa;
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0a0a0a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #404040;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #525252;
+  }
 }
 
 @layer components {
+  /* ───── Glass Cards ───── */
   .glass-card {
     @apply bg-surface-900/60 backdrop-blur-xl border border-surface-700/50 rounded-2xl;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.03);
   }
   .glass-card-hover {
     @apply glass-card transition-all duration-300;
   }
   .glass-card-hover:hover {
-    @apply border-brand-500/30;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 30px rgba(99,102,241,0.1);
+    @apply border-accent-500/30;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 0 30px rgba(249, 115, 22, 0.08);
     transform: translateY(-2px);
   }
+
+  /* ───── Gradient Text ───── */
   .gradient-text {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, #818cf8 0%, #6366f1 25%, #a78bfa 50%, #34d399 100%);
+    background-image: linear-gradient(
+      135deg,
+      #fb923c 0%,
+      #f97316 40%,
+      #ea580c 100%
+    );
   }
+
+  /* ───── Buttons ───── */
   .btn-primary {
-    @apply px-6 py-3 bg-gradient-to-r from-brand-600 to-brand-500 text-white font-semibold rounded-xl
-           hover:from-brand-500 hover:to-brand-400 transition-all duration-300 shadow-glow hover:shadow-glow-lg active:scale-[0.98];
+    @apply px-6 py-3 bg-gradient-to-r from-accent-600 to-accent-500 text-white font-semibold rounded-xl
+           hover:from-accent-500 hover:to-accent-400 transition-all duration-300 shadow-glow hover:shadow-glow-lg active:scale-[0.98];
   }
   .btn-secondary {
     @apply px-6 py-3 bg-surface-800 text-surface-200 font-semibold rounded-xl border border-surface-700
@@ -46,6 +78,8 @@
     @apply px-6 py-3 bg-gradient-to-r from-danger-600 to-danger-500 text-white font-semibold rounded-xl
            hover:from-danger-500 hover:to-danger-400 transition-all duration-300 shadow-glow-danger active:scale-[0.98];
   }
+
+  /* ───── Badges ───── */
   .badge-safe {
     @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-bold
            bg-cyber-500/20 text-cyber-400 border border-cyber-500/30;
@@ -58,23 +92,49 @@
     @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-bold
            bg-danger-500/20 text-danger-400 border border-danger-500/30;
   }
+
+  /* ───── Scan Effect ───── */
   .scan-overlay {
     @apply absolute inset-0 overflow-hidden rounded-2xl pointer-events-none;
   }
   .scan-overlay::before {
-    content: '';
+    content: "";
     @apply absolute inset-x-0 h-1;
-    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.6), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(249, 115, 22, 0.6),
+      transparent
+    );
     animation: scan-line 2s linear infinite;
   }
+
+  /* ───── Input ───── */
   .input-field {
     @apply w-full px-4 py-3 bg-surface-900/80 border border-surface-700 rounded-xl
            text-surface-200 placeholder-surface-500
-           focus:outline-none focus:border-brand-500/50 focus:ring-2 focus:ring-brand-500/20
+           focus:outline-none focus:border-accent-500/50 focus:ring-2 focus:ring-accent-500/20
            transition-all duration-300;
   }
-  .stat-number {
-    @apply text-4xl font-extrabold tracking-tight;
-    font-variant-numeric: tabular-nums;
+
+  /* ───── Tab System ───── */
+  .tab-btn {
+    @apply px-5 py-2.5 text-sm font-semibold rounded-xl transition-all duration-300 cursor-pointer;
+  }
+  .tab-btn-active {
+    @apply bg-accent-500/20 text-accent-400 border border-accent-500/30;
+  }
+  .tab-btn-inactive {
+    @apply text-surface-400 border border-transparent hover:text-surface-200 hover:bg-surface-800/50;
+  }
+}
+
+/* ───── Scan line animation ───── */
+@keyframes scan-line {
+  0% {
+    top: -4px;
+  }
+  100% {
+    top: 100%;
   }
 }
