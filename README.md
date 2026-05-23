@@ -87,48 +87,9 @@
 
 ## 🏗️ Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    FRONTEND (React 19 + Vite)                   │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌───────────────┐   │
-│  │  Scanner  │  │Dashboard │  │ History  │  │ About/Contact │   │
-│  │   Page    │  │ Analytics│  │  Page    │  │    Pages      │   │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └───────────────┘   │
-│       └──────────────┴─────────────┘                             │
-│                      │                                           │
-│              ┌───────┴────────┐                                  │
-│              │  API Service   │ ←── Supabase (optional cloud DB) │
-│              └───────┬────────┘                                  │
-└──────────────────────┼──────────────────────────────────────────┘
-                       │  HTTP / REST
-┌──────────────────────┼──────────────────────────────────────────┐
-│                  BACKEND (FastAPI + Python)                      │
-│              ┌───────┴────────┐                                  │
-│              │  Unified Scan  │  POST /api/scan                  │
-│              │   Endpoint     │                                  │
-│              └───────┬────────┘                                  │
-│                      │                                           │
-│         ┌────────────┼────────────┐                              │
-│         │    Auto-Detection       │                              │
-│         │  URL │ Email │ Phone │ Text │ Image │ QR              │
-│         └──┬─────┬──────┬──────┬──────┬───────┬─┘               │
-│            │     │      │      │      │       │                  │
-│  ┌─────────▼┐ ┌──▼───┐ ┌▼────┐ ┌▼────┐ ┌▼───┐ ┌▼────┐         │
-│  │URL       │ │Email │ │Phone│ │Text │ │OCR │ │QR   │          │
-│  │Analyzer  │ │Parser│ │Anlzr│ │Clsfr│ │Proc│ │Decdr│          │
-│  └─────────┘ └──────┘ └─────┘ └──┬──┘ └────┘ └─────┘          │
-│                                   │                              │
-│                    ┌──────────────┴──────────────┐               │
-│                    │     ML Phishing Classifier    │              │
-│                    │  (TF-IDF + Ensemble Voting)   │              │
-│                    └──────────────┬──────────────┘               │
-│                                   │                              │
-│                          ┌────────▼────────┐                     │
-│                          │  Risk Engine     │                     │
-│                          │  (0-100 Scoring) │                     │
-│                          └─────────────────┘                     │
-└──────────────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="frontend/public/arch.png" alt="Sentinel AI Architecture Diagram" width="100%" />
+</p>
 
 ### Sequence Diagram — Scan Request Flow
 
@@ -181,78 +142,6 @@ sequenceDiagram
     opt Share Publicly enabled
         Frontend->>Supabase: Save scan to sentinelhistory
     end
-```
-
-### Component Diagram
-
-```mermaid
-graph TB
-    subgraph Client["🌐 Client Layer"]
-        A["sentinelcyberai.netlify.app"]
-    end
-
-    subgraph Frontend["⚛️ Frontend — React 19"]
-        B["Scan Page"]
-        C["Analytics Dashboard"]
-        D["History Page"]
-        E["Auth Pages"]
-    end
-
-    subgraph Auth["🔐 Supabase"]
-        F["Email/Password Auth"]
-        G["Google OAuth"]
-        H["GitHub OAuth"]
-        I["PostgreSQL DB"]
-    end
-
-    subgraph Backend["🐍 Backend — FastAPI"]
-        J["POST /api/scan"]
-        K["Auto-Detection Engine"]
-
-        subgraph Analyzers["🔬 Analyzers"]
-            L["URL Analyzer"]
-            M["Email Parser"]
-            N["Phone Analyzer"]
-            O["QR Decoder"]
-        end
-
-        subgraph ImageProc["📷 OCR"]
-            P["Tesseract OCR"]
-            Q["OpenCV Preprocessing"]
-        end
-
-        subgraph MLEngine["🧠 ML Engine"]
-            R["TF-IDF Vectorizer"]
-            S["Ensemble Classifier"]
-            T["Heuristic Engine"]
-            U["Hybrid Scorer"]
-        end
-
-        V["Risk Engine 0-100"]
-    end
-
-    subgraph Deploy["☁️ Deployment"]
-        W["Netlify"]
-        X["Render Docker"]
-    end
-
-    A --> B & C & D & E
-    E --> F & G & H
-    B & C & D --> I
-    B -->|REST API| J
-    J --> K
-    K --> L & M & N & O & P
-    P --> Q
-    Q --> R
-    L & M & N --> R
-    O --> L
-    R --> S & T
-    S --> U
-    T --> U
-    U --> V
-    V -->|JSON| B
-    Frontend -.-> W
-    Backend -.-> X
 ```
 
 ---
