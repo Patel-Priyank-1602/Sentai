@@ -50,6 +50,8 @@
 
 ---
 
+<a id="features"></a>
+
 ## ✨ Features
 
 | Feature | Description |
@@ -67,6 +69,8 @@
 
 ---
 
+<a id="supported-input-types"></a>
+
 ## 🛡️ Supported Input Types
 
 <table>
@@ -83,6 +87,8 @@
 </table>
 
 ---
+
+<a id="architecture"></a>
 
 ## 🏗️ Architecture
 
@@ -145,6 +151,8 @@ sequenceDiagram
 
 ---
 
+<a id="ai--ml-pipeline"></a>
+
 ## 🧠 AI / ML Pipeline
 
 ### Hybrid Scoring Strategy
@@ -203,6 +211,8 @@ Uploaded Image
 
 ---
 
+<a id="tech-stack"></a>
+
 ## 🖥️ Tech Stack
 
 ### Frontend
@@ -243,6 +253,8 @@ Uploaded Image
 | **Docker** | Containerized Backend Deployment |
 
 ---
+
+<a id="getting-started"></a>
 
 ## 🚀 Getting Started
 
@@ -338,6 +350,8 @@ python -m ml.train_model
 
 ---
 
+<a id="api-reference"></a>
+
 ## 📡 API Reference
 
 ### Root
@@ -418,6 +432,8 @@ DELETE /api/scans/:id   # Delete a scan
 
 ---
 
+<a id="configuration"></a>
+
 ## 🔧 Configuration
 
 ### Backend `.env`
@@ -446,6 +462,8 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 ---
 
+<a id="docker-deployment"></a>
+
 ## 🐳 Docker Deployment
 
 The backend includes a production-ready Dockerfile with Tesseract OCR pre-installed.
@@ -472,6 +490,8 @@ docker run -p 8000:8000 sentinel-backend
 > Render's free tier has limited resources (512MB RAM, shared CPU). Text/URL/email/phone scans work great. Image OCR scans may be slow due to processing overhead. For production image scanning, use a paid tier or self-host.
 
 ---
+
+<a id="model-training"></a>
 
 ## 📊 Model Training
 
@@ -521,6 +541,8 @@ TF-IDF Vectorizer (10K features, 1–3 n-grams)
 ```
 
 ---
+
+<a id="project-structure"></a>
 
 ## 📂 Project Structure
 
@@ -587,6 +609,8 @@ Sentinel_Cyber_AI/
 
 ---
 
+<a id="contributing"></a>
+
 ## 🤝 Contributing
 
 Contributions are welcome! Here's how:
@@ -605,6 +629,8 @@ Contributions are welcome! Here's how:
 - ReDoc at `http://localhost:8000/redoc`
 
 ---
+
+<a id="license"></a>
 
 ## 📝 License
 
