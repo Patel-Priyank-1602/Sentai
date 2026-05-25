@@ -47,7 +47,7 @@ export default function App() {
         {/* Footer */}
         <footer className="border-t border-surface-800/60 bg-surface-950/80 backdrop-blur-xl py-4 sm:py-6 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-[10px] sm:text-xs text-surface-500">
-            <p>© 2025 Sentinel AI-Powered Threat Detection</p>
+            <p>© 2026 Sentinel AI-Powered Threat Detection</p>
             <div className="flex items-center gap-4">
               <a
                 href="#"

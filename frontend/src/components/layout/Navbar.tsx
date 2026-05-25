@@ -283,7 +283,7 @@ export function Navbar() {
                   Start New Scan
                 </Link>
                 <p className="text-center text-[10px] text-surface-600 mt-3">
-                  © 2025 Sentinel AI
+                  © 2026 Sentinel AI
                 </p>
               </div>
             </motion.div>
