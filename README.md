@@ -13,11 +13,11 @@
 </p>
 
 <p align="center">
-  <a href="#-features"><img src="https://img.shields.io/badge/AI%20Engine-Active-brightgreen?style=for-the-badge" alt="AI Engine" /></a>
-  <a href="#-tech-stack"><img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" /></a>
-  <a href="#-tech-stack"><img src="https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" /></a>
-  <a href="#-tech-stack"><img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" /></a>
-  <a href="#-tech-stack"><img src="https://img.shields.io/badge/Scikit--Learn-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white" alt="Scikit-learn" /></a>
+  <a href="#features"><img src="https://img.shields.io/badge/AI%20Engine-Active-brightgreen?style=for-the-badge" alt="AI Engine" /></a>
+  <a href="#tech-stack"><img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" /></a>
+  <a href="#tech-stack"><img src="https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" /></a>
+  <a href="#tech-stack"><img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" /></a>
+  <a href="#tech-stack"><img src="https://img.shields.io/badge/Scikit--Learn-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white" alt="Scikit-learn" /></a>
   <a href="#license"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License" /></a>
 </p>
 
@@ -28,25 +28,25 @@
 <br/>
 
 > [!WARNING]
-> **Image Scanning on Live Demo:** The hosted demo at [sentinelcyberai.netlify.app](https://sentinelcyberai.netlify.app) runs on **Render's free tier** with limited CPU & RAM. Image/OCR scans may be **slow or timeout**. Text, URL, email, and phone scans work perfectly. For reliable image scanning, **fork this repo and run the backend locally** — see [Getting Started](#-getting-started).
+> **Image Scanning on Live Demo:** The hosted demo at [sentinelcyberai.netlify.app](https://sentinelcyberai.netlify.app) runs on **Render's free tier** with limited CPU & RAM. Image/OCR scans may be **slow or timeout**. Text, URL, email, and phone scans work perfectly. For reliable image scanning, **fork this repo and run the backend locally** — see [Getting Started](#getting-started).
 
 ---
 
 ## 📖 Table of Contents
 
-- [✨ Features](#-features)
-- [🛡️ Supported Input Types](#️-supported-input-types)
-- [🏗️ Architecture](#️-architecture)
-- [🧠 AI / ML Pipeline](#-ai--ml-pipeline)
-- [🖥️ Tech Stack](#️-tech-stack)
-- [🚀 Getting Started](#-getting-started)
-- [📡 API Reference](#-api-reference)
-- [🔧 Configuration](#-configuration)
-- [🐳 Docker Deployment](#-docker-deployment)
-- [📊 Model Training](#-model-training)
-- [📂 Project Structure](#-project-structure)
-- [🤝 Contributing](#-contributing)
-- [📝 License](#-license)
+- [✨ Features](#features)
+- [🛡️ Supported Input Types](#supported-input-types)
+- [🏗️ Architecture](#architecture)
+- [🧠 AI / ML Pipeline](#ai--ml-pipeline)
+- [🖥️ Tech Stack](#tech-stack)
+- [🚀 Getting Started](#getting-started)
+- [📡 API Reference](#api-reference)
+- [🔧 Configuration](#configuration)
+- [🐳 Docker Deployment](#docker-deployment)
+- [📊 Model Training](#model-training)
+- [📂 Project Structure](#project-structure)
+- [🤝 Contributing](#contributing)
+- [📝 License](#license)
 
 ---
 
@@ -63,7 +63,6 @@
 | 📞 **Phone Number Risk Assessment** | 60+ high-risk area codes and country code database with VoIP pattern detection and number anomaly analysis |
 | 📊 **Real-Time Analytics Dashboard** | Live threat feed, risk trend charts, threat distribution pie chart, and input volume bar chart powered by Recharts |
 | ☁️ **Supabase Integration** | Optional cloud persistence — users can opt-in to share scan results publicly for community threat intelligence |
-| 🔐 **Supabase Auth** | Email/password authentication with Google & GitHub OAuth integration |
 | 🐳 **Docker Ready** | Production Dockerfile included for containerized backend deployment with Tesseract OCR pre-installed |
 
 ---
@@ -97,7 +96,7 @@
 sequenceDiagram
     actor User
     participant Frontend as Frontend<br/>React + Vite
-    participant Supabase as Supabase<br/>Auth + DB
+    participant Supabase as Supabase DB
     participant API as FastAPI<br/>Backend
     participant Detect as Auto-Detection<br/>Engine
     participant Analyzer as Analyzer<br/>URL/Email/Phone
@@ -217,7 +216,7 @@ Uploaded Image
 | **Recharts** | Data Visualization (Area, Pie, Bar charts) |
 | **Lucide React** | Icon Library |
 | **React Router 7** | Client-Side Routing |
-| **Supabase JS** | Auth & Database Client |
+| **Supabase JS** | Database Client |
 
 ### Backend
 
@@ -240,7 +239,7 @@ Uploaded Image
 |---|---|
 | **Netlify** | Frontend Hosting |
 | **Render** | Backend Hosting (Docker) |
-| **Supabase** | Auth, Database (PostgreSQL) |
+| **Supabase** | Database (PostgreSQL) |
 | **Docker** | Containerized Backend Deployment |
 
 ---
@@ -251,7 +250,7 @@ Uploaded Image
 
 - **Node.js** ≥ 18.x
 - **Python** ≥ 3.11
-- **Tesseract OCR** — [Install guide](#tesseract-installation)
+- **Tesseract OCR** — [Install guide](#4-tesseract-installation)
 - **Git**
 
 ### 1. Clone the Repository
@@ -434,7 +433,7 @@ SUPABASE_KEY=your_supabase_key
 # Backend API URL (use http://localhost:8000 for local development)
 VITE_API_URL=http://localhost:8000
 
-# Supabase (for auth & cloud persistence)
+# Supabase (for cloud persistence)
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
@@ -442,9 +441,8 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ### Supabase Setup (Optional)
 
 1. Create a free project at [supabase.com](https://supabase.com)
-2. Enable **Email/Password**, **Google**, and **GitHub** auth providers
-3. Create the `sentinelhistory` table (schema in `frontend/sentinelhistory.sql`)
-4. Add credentials to both `.env` files
+2. Create the `sentinelhistory` table (schema in `frontend/sentinelhistory.sql`)
+3. Add credentials to both `.env` files
 
 ---
 
