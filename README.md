@@ -13,6 +13,10 @@
 </p>
 
 <p align="center">
+  <a href="https://diploi.com/launch/Patel-Priyank-1602/Sentinel_Cyber_AI"><img src="https://diploi.com/launch.svg" alt="launch with diploi badge" /></a>
+</p>
+
+<p align="center">
   <a href="#features"><img src="https://img.shields.io/badge/AI%20Engine-Active-brightgreen?style=for-the-badge" alt="AI Engine" /></a>
   <a href="#tech-stack"><img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" /></a>
   <a href="#tech-stack"><img src="https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" /></a>
@@ -42,7 +46,7 @@
 - [🚀 Getting Started](#getting-started)
 - [📡 API Reference](#api-reference)
 - [🔧 Configuration](#configuration)
-- [🐳 Docker Deployment](#docker-deployment)
+- [🚀 Deployment](#deployment)
 - [📊 Model Training](#model-training)
 - [📂 Project Structure](#project-structure)
 - [🤝 Contributing](#contributing)
@@ -462,13 +466,31 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 ---
 
-<a id="docker-deployment"></a>
+<a id="deployment"></a>
 
-## 🐳 Docker Deployment
+## 🚀 Deployment
+
+### Option 1: Deploy the full-stack app to Diploi
+
+[![launch with diploi button](https://diploi.com/launch-big.svg)](https://diploi.com/launch/Patel-Priyank-1602/Sentinel_Cyber_AI)
+
+1. Launch the project
+
+  Click the launch button above to create a new Diploi deployment for the full stack app.
+
+2. View the deployment
+
+  Open the preview URL from your Diploi deployment page, or open the **Preview** tab and choose "React + Vite" from the dropdown to view the frontend.
+
+3. Add environment variables if needed
+
+  If the project needs additional environment variables, open the **Environment** tab in the sidebar and add them manually.
+
+For more information, visit [diploi.com](https://diploi.com/).
+
+### Option 2: Local Docker Build
 
 The backend includes a production-ready Dockerfile with Tesseract OCR pre-installed.
-
-### Local Docker Build
 
 ```bash
 cd backend
@@ -476,7 +498,7 @@ docker build -t sentinel-backend .
 docker run -p 8000:8000 sentinel-backend
 ```
 
-### Deploy to Render
+### Option 3: Deploy Backend to Render
 
 1. Push to GitHub
 2. Create a new **Web Service** on [Render](https://render.com)
